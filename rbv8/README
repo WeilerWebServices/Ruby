@@ -1,0 +1,28 @@
+= rbv8 -- A Ruby VM running on Google V8.
+
+V8 (http://code.google.com/p/v8/) is running Javascript, a highly dynamic language, faster then fast.
+Ruby is a super highly dynamic language too!
+Ruby must be uber fast on V8, no?
+Lets see ...
+
+If you're looking for the original prototype using HotRuby, check the hotruby branch.
+
+== Install
+
+Make sure your meet V8 Pre-requisites: http://code.google.com/apis/v8/build.html#pre_reqs
+
+Then run:
+  rake build
+
+== Running your cute lil' Ruby script
+
+  build/rbv8 your_ruby_script.rb
+
+== Licence
+
+Ruby Licence.
+
+== Copyright
+
+Marc-Andre Cournoyer
+http://macournoyer.com

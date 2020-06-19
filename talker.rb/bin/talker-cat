@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+require "talker/client"
+require "talker/cli"
+
+token = Talker::CLI.load_token
+room = ARGV.first
+
+abort <<-EOS unless room
+usage: echo 'something' | talker-cat <room name>
+
+  Send the result of a command to a room:
+  
+    ls lolcats/*.jpg | talker-cat Main
+  
+  Send a file to a room:
+  
+    talker-cat Main < site_fixer.rb
+  
+EOS
+
+# Non-blocking reader for stdin
+module Reader
+  attr_accessor :client
+  
+  def notify_readable
+    @client.send_message @io.readline.chomp
+  rescue EOFError
+    detach
+  end
+  
+  def unbind
+    @client.close
+  end
+end
+
+Talker::Client.connect(:room => room, :token => token) do |client|
+  client.on_connected do
+    conn = EM.watch STDIN, Reader
+    conn.client = client
+    conn.notify_readable = true
+  end
+  client.on_error do |error|
+    puts error
+  end
+  trap("INT") { client.close }
+end

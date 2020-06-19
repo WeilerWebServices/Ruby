@@ -1,0 +1,41 @@
+== Rack Sandbox Adapter
+
+Run multiple framework / rack app / wathever inside the same VM
+using _why Freaky Freaky Sandbox: http://code.whytheluckystiff.net/sandbox/
+
+=== Installation
+
+Patch Ruby and install The Sandbox:
+http://code.whytheluckystiff.net/sandbox/wiki/InstallingTheSandbox
+
+=== Usage
+
+In config.ru:
+
+ require 'sandbox' # IMPORTANT: sandbox must be loaded before rubygems!
+ require 'rubygems'
+
+ require 'rack/adapter/sandboxed_rails'
+
+ map 'http://myfirstapp.com' do
+   run Rack::Adapter::SandboxedRails.new(:root => '/path/to/a/rails_app')
+ end
+ map 'http://mysecondapp.com' do
+   run Rack::Adapter::SandboxedRails.new(:root => '/path/to/another/rails_app')
+ end
+
+Run using Thin:
+
+ thin start -r config.ru
+
+You first Rails app will be available at http://myfirstapp.com and the second one under http://mysecondapp.com.
+
+Enjoy!
+
+=== Limitation
+The Rack Sandbox is still very hackish, it's works with very bare bone Rails application,
+no gems, no session, no database. Some more hacking needs to be done to support a full app.
+
+=== License
+Ruby License, http://www.ruby-lang.org/en/LICENSE.txt
+(C) Marc-Andre Cournoyer <macournoyer@gmail.com>

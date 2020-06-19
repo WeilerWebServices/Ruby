@@ -1,0 +1,34 @@
+sudo: false
+language: ruby
+rvm:
+- 2.2.10
+- 2.3.8
+- 2.4.7
+- 2.5.6
+- 2.6.4
+- ruby-head
+
+matrix:
+  allow_failures:
+  - rvm: ruby-head
+
+before_install:
+- gem update --system || (gem i "rubygems-update:~>2.7" --no-document && update_rubygems)
+- gem update bundler
+
+script:
+- bundle exec rubocop && bundle exec rspec
+
+jobs:
+  include:
+    - stage: gem release
+      if: tag =~ ^v
+      rvm: 2.6.0
+      script: echo "Deploying to rubygems.org ..."   
+      deploy:
+        provider: rubygems
+        api_key: $RUBYGEMS_API_KEY
+        gem: annotate
+        on:
+          tags: true
+          repo: ctran/annotate_models
